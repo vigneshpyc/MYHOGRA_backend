@@ -18,10 +18,18 @@ def add_product(userId, product):
         Date = date.today().isoformat()
         con = connection()
         cursor = con.cursor(dictionary=True)        
-        cursor.execute("insert into purchase_data values(%s,%s,%s,%s)",(userId, None, product, Date))
+        cursor.execute("insert into purchase_data(userid, purchased, not_purchased, purchased_date) values(%s,%s,%s,%s)",(userId, None, product, Date))
         con.commit()
         cursor.close()
         print("✅Product added")
         return {"status":True,"message":"Data Added Successfully"}
     else:
         print("⚠️Product not added, required data missing")
+
+
+def reset(userid):
+    con = connection()
+    cursor = con.cursor()
+    cursor.execute("delete from purchase_data where userid=%s",(userid))
+    con.commit()
+    cursor.close()

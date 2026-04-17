@@ -2,6 +2,7 @@ from app.core.security import create_token
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
 from app.db.fake_db import get_data
 from app.db.db_connect import connection
+from datetime import date
 
 
 def authenticate_user(email, password):
@@ -18,8 +19,8 @@ def authenticate_user(email, password):
     if not data:
         print("error")
         return {"Status":"Fail", "message":"data is empty"}
-    
-    cursor.execute(f"select purchased, not_purchased from purchase_data where userid='{data['userid']}'")
+    ToDayDate = date.today()
+    cursor.execute("select purchased, not_purchased from purchase_data where userid=%s and purchased_date=%s",(data['userid'],ToDayDate))
     product_data = cursor.fetchall()
     
     purchased = [x['purchased'] for x in product_data]

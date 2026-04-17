@@ -4,7 +4,7 @@ from app.schemas.auth import LoginRequest
 from app.services.auth_services import authenticate_user, generate_tokens
 from app.core.config import SECRET_KEY, ALGORITHM
 import json
-from app.db.db_operation import product_fetch
+from app.db.db_operation import product_fetch,reset
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 @router.post("/login")
 def login(user: LoginRequest, response: Response):
     userdata = authenticate_user(user.email, user.password)
-    print(userdata)
+    # print(userdata)
     username = userdata['username']
 
 
@@ -35,6 +35,7 @@ def login(user: LoginRequest, response: Response):
     #line check for completed status, if incolmpleted get the incompleted list and send to user
     if userdata['notPurchased'].count(None) == len(userdata['notPurchased']):
          purchased = []
+         reset(userdata['userID'])
     else:
         purchased = userdata['purchased']
     
@@ -44,26 +45,27 @@ def login(user: LoginRequest, response: Response):
 @router.post("/refresh")
 async def refresh_token(request: Request):
     token = request.cookies.get("refresh_token")
-    print(request)
+    # print(request)
 
     if not token:
         raise HTTPException(status_code=401, detail="No refresh token")
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print("payload : ", payload)
+        # print("payload : ", payload)
         username = payload.get("sub")
         userID = payload.get("userID")
         access_token, _ = generate_tokens(username,userID)
         # body = await request.json()
         # print(body)
         # userID = body['userID']
-        print(userID)
+        # print(userID)
         purchased, notPurchased = product_fetch(userID)
         if notPurchased.count(None) == len(notPurchased):
             purchased = []
-        print("✅purchased from refresh",purchased)
-        print("✅not purchased from refresr", notPurchased)
+
+        # print("✅purchased from refresh",purchased)
+        # print("✅not purchased from refresr", notPurchased)
         return {"username":username,"userId":userID, "access_token": access_token, "purchased":purchased, "notPurchased":notPurchased}
 
     except JWTError:

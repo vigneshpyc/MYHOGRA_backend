@@ -1,0 +1,14 @@
+{
+    "users":{
+        "vignesh":{
+            "password":1234,
+            "purchased":["gabage", "potato", "Brinjal","tomato"],
+            "not_purchased":["onion","dhal","milk"]
+        },
+        "muthu":{
+            "password":5678,
+            "purchased":["gabage", "potato", "Brinjal","tomato"],
+            "not_purchased":["onion","dhal","milk"]
+        }
+    }
+}

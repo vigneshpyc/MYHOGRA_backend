@@ -1,10 +1,7 @@
 from fastapi import FastAPI
-#from app.api.V1.router import api_router
-#from app.api.V1.endpoints.auth import router
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.V1.router import api_router
 app = FastAPI()
-# 🔥 Allowed origins (frontend URLs)
 origins = [
     # "http://localhost:5173",   # Vite dev server
     # "http://127.0.0.1:5173"

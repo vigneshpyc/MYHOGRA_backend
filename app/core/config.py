@@ -2,12 +2,6 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-# SECRET_KEY = "supersecretkey" #os.getenv("SECRET_KEY")
-# ALGORITHM = "HS256"
-
-# ACCESS_TOKEN_EXPIRE_MINUTES = 1
-# REFRESH_TOKEN_EXPIRE_MINUTES = 5
-
 #Security credentials values
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")

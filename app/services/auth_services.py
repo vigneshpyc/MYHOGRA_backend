@@ -12,22 +12,18 @@ def authenticate_user(email, password):
         cursor = con.cursor(dictionary=True)
         cursor.execute("select userid, user_name from users where email=%s and user_password=%s",(email,password))
         data = cursor.fetchone()
-        print("data",data)
     except Exception as e:
-        print("⚠️Error while fetching")
+        return {"status":False, "message":"invalid user"}
     
     if not data:
-        print("error")
         return {"Status":"Fail", "message":"data is empty"}
     ToDayDate = date.today()
     cursor.execute("select purchased, not_purchased from purchase_data where userid=%s and purchased_date=%s",(data['userid'],ToDayDate))
     product_data = cursor.fetchall()
     
     purchased = [x['purchased'] for x in product_data]
-    print("purchased : ",purchased)
     
     notPurchased = [x['not_purchased'] for x in product_data]
-    print(purchased,notPurchased)
     
     return {"username":data['user_name'],"userID": data['userid'], "purchased":purchased, "notPurchased":notPurchased}
 

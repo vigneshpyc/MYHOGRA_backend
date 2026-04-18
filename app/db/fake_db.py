@@ -1,6 +1,4 @@
-# fake_users = {
-#     "vignesh": "1234"   # demo
-# }
+
 import json
 def get_data(username):
     if username:

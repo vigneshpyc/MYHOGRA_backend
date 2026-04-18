@@ -11,15 +11,13 @@ db_api = APIRouter(prefix='/dbapi', tags=['Dbapi'])
 
 @db_api.post('/addproduct')
 async def add_product_db(request :Request):
+    #get userid from tokens
     token = request.cookies.get("refresh_token")
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
     userID = payload.get("userID")
-    data = await request.json()
 
-    print("Product : ", data['product'])
+    data = await request.json()
     res = add_product(userID, data['product'] )
-    print(res['message'])
     return res
 
 @db_api.post('/update')
@@ -27,14 +25,11 @@ def update_db(data:Update_db_request):
     try:
         con = connection()
         cursor = con.cursor()
-        print("------------------------------------Db connected successfully, entering query execution👇-------------------------------")
     except Exception as e:
-        print("Something went worng because ",e)
-    # cursor.execute(f"update purchase_data set purchased='{data.product}', not_purchased='{""}' where userid={data.userID} and not_purchased='{data.product}'")
+        return {"status":"error", "message":"Something went wrong because of "+e}
     cursor.execute("update purchase_data set purchased = %s, not_purchased=%s where userid=%s and not_purchased = %s",(data.product,None,data.userID,data.product))
     con.commit()
     cursor.close()
-    print("✅ Db updated successfully")
     return {"status":"success"}
 
 @db_api.post('/fetchproduct')

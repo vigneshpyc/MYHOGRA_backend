@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Response, Request, HTTPException
 from jose import jwt, JWTError
-from app.schemas.auth import LoginRequest
+from app.schemas.auth import LoginRequest, UserData
 from app.services.auth_services import authenticate_user, generate_tokens
 from app.core.config import SECRET_KEY, ALGORITHM
 import json
 from app.db.db_operation import product_fetch,reset
+from app.db.db_connect import connection
+from datetime import date
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -66,3 +68,13 @@ async def refresh_token(request: Request):
 def logout(response: Response):
     response.delete_cookie("refresh_token")
     return {"message": "Logged out"}
+
+@router.post('/newuser')
+def create_new_user(UserData:UserData):
+    Date = date.today()
+    con = connection()
+    cursor = con.cursor()
+    cursor.execute("insert into users(user_name,email, user_password, created_date, user_status) values(%s,%s,%s,%s,%s)",(UserData.username, UserData.email,UserData.password, Date, 1))
+    con.commit()
+    cursor.close()
+    return {"status":"ok","message":"New User Created Successfully"}
